@@ -41,6 +41,7 @@ const rest = new REST({ version: '10' }).setToken(TOKEN);
 (async () => {
   try {
     console.log("Registering global commands...");
+    console.log('Command names:', commands.map(c => c.name));
     await rest.put(
       Routes.applicationCommands(CLIENT_ID),
       { body: commands }
