@@ -7,6 +7,7 @@ const {
   TextInputStyle,
   Events,
   SlashCommandBuilder,
+  StringSelectMenuBuilder,
   REST,
   Routes
 } = require('discord.js');
@@ -27,6 +28,10 @@ const commands = [
   new SlashCommandBuilder()
     .setName('eladas')
     .setDescription('Eladás számontartása')
+  
+  new SlashCommandBuilder()
+  .setName('tarolo')
+  .setDescription('Tároló számontartása')
 ].map(cmd => cmd.toJSON());
 
 const rest = new REST({ version: '10' }).setToken(TOKEN);
@@ -115,6 +120,42 @@ client.on(Events.InteractionCreate, async interaction => {
 
       await interaction.showModal(modal);
     }
+    
+    // ===== /container =====
+  
+    if (interaction.commandName === 'tarolo') {
+
+      const modal = new ModalBuilder()
+        .setCustomId('container_modal')
+        .setTitle('Tároló nyilvántartás');
+
+      const nameInput = new TextInputBuilder()
+        .setCustomId('name')
+        .setLabel('Név')
+        .setStyle(TextInputStyle.Short);
+
+      const objectInput = new TextInputBuilder()
+        .setCustomId('object')
+        .setLabel('Tárgy')
+        .setStyle(TextInputStyle.Short);
+
+      const quantityInput = new TextInputBuilder()
+        .setCustomId('quantity')
+        .setLabel('Mennyiség')
+        .setStyle(TextInputStyle.Short);
+
+      modal.addComponents(
+        new ActionRowBuilder().addComponents(nameInput),
+        new ActionRowBuilder().addComponents(objectInput),
+        new ActionRowBuilder().addComponents(quantityInput)
+      );
+
+      await interaction.showModal(modal);
+
+      // Store user temporarily (we'll ask IN/OUT next)
+      client.tempContainer = client.tempContainer || {};
+      client.tempContainer[interaction.user.id] = {};
+    }
   }
 
   if (interaction.isModalSubmit()) {
@@ -157,7 +198,79 @@ client.on(Events.InteractionCreate, async interaction => {
         content: `🛒 Új Eladás\nNév: ${name}\nTárgy: ${object}\nMennyiség: ${quantity}\nÁr: ${price}`
       });
     }
+    
+    // ===== container result =====
+
+    if (interaction.customId === 'container_modal') {
+
+      const name = interaction.fields.getTextInputValue('name');
+      const object = interaction.fields.getTextInputValue('object');
+      const quantity = interaction.fields.getTextInputValue('quantity');
+
+      // Save data temporarily
+      client.tempContainer[interaction.user.id] = {
+        name,
+        object,
+        quantity
+      };
+
+      const row = new ActionRowBuilder().addComponents(
+        new StringSelectMenuBuilder()
+          .setCustomId('container_type')
+          .setPlaceholder('Kivétel vagy berakás?')
+          .addOptions([
+            {
+              label: 'Kivét',
+              value: 'Kivét'
+            },
+            {
+              label: 'Berakás',
+              value: 'Berakás'
+            }
+          ])
+      );
+
+      await interaction.reply({
+        content: "Válassz:",
+        components: [row],
+        ephemeral: true
+      });
+    }
   }
+  
+  if (interaction.isStringSelectMenu()) {
+
+  if (interaction.customId === 'container_type') {
+
+    const type = interaction.values[0];
+    const data = client.tempContainer[interaction.user.id];
+
+    if (!data) {
+      return interaction.reply({
+        content: "❌ Sikertelen feljegyzés!",
+        ephemeral: true
+      });
+    }
+
+    await interaction.update({
+      content: "✅ Sikeres feljegyzés!",
+      components: []
+    });
+
+    await interaction.channel.send({
+      content:
+        `📦 Tároló - ${type}\n` +
+        `Név: ${data.name}\n` +
+        `Tárgy: ${data.object}\n` +
+        `Mennyiség: ${data.quantity}`
+    });
+
+    delete client.tempContainer[interaction.user.id];
+  }
+}
+  
+
+  
 });
 
 client.login(TOKEN);
