@@ -19,6 +19,8 @@ const client = new Client({
   intents: [GatewayIntentBits.Guilds]
 });
 
+client.tempContainer = {};
+
 // 🔹 REGISTER GLOBAL COMMANDS (works in ALL servers)
 const commands = [
   new SlashCommandBuilder()
@@ -152,9 +154,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
       await interaction.showModal(modal);
 
-      // Store user temporarily (we'll ask IN/OUT next)
-      client.tempContainer = client.tempContainer || {};
-      client.tempContainer[interaction.user.id] = {};
+      
     }
   }
 
