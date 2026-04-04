@@ -27,7 +27,7 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('eladas')
-    .setDescription('Eladás számontartása')
+    .setDescription('Eladás számontartása'),
   
   new SlashCommandBuilder()
   .setName('tarolo')
