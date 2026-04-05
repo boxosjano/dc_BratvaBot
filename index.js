@@ -204,7 +204,9 @@ client.on(Events.InteractionCreate, async interaction => {
         ephemeral: true
       });
 
-      await interaction.channel.send({
+      const channel = interaction.client.channels.cache.get("1490383164961722368");
+      
+      await channel.send({
         content: `<@&1487117451018764361>`, // 👈 your Tag role ID
         embeds: [
           {
@@ -302,7 +304,9 @@ client.on(Events.InteractionCreate, async interaction => {
       components: []
     });
 
-    await interaction.channel.send({
+    const channel = interaction.client.channels.cache.get("1490383164961722368");
+    
+    await channel.send({
       content: `<@&1487117451018764361>`, // 👈 TAG USER
       embeds: [
         {
