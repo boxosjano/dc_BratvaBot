@@ -177,7 +177,16 @@ client.on(Events.InteractionCreate, async interaction => {
       const result = number * (percent / 100);
 
       await interaction.reply({
-        content: `Eredmény: ${result}`,
+        embeds: [
+          {
+            title: "📊 Százalék számoló",
+            fields: [
+              { name: "Szám", value: `${number}`, inline: true },
+              { name: "Százalék", value: `${percent}%`, inline: true },
+              { name: "Eredmény", value: `${result}`, inline: false }
+            ]
+          }
+        ],
         ephemeral: true
       });
     }
@@ -196,7 +205,42 @@ client.on(Events.InteractionCreate, async interaction => {
       });
 
       await interaction.channel.send({
-        content: `🛒 Új Eladás\nNév: ${name}\nTárgy: ${object}\nMennyiség: ${quantity}\nÁr: ${price}`
+        content: `<@&1487117451018764361>`, // 👈 your Tag role ID
+        embeds: [
+          {
+            title: "🛒 ELADÁS",
+            color: 0xf1c40f, // nice yellow/gold
+      
+            fields: [
+              {
+                name: "Név",
+                value: name,
+                inline: true
+              },
+              {
+                name: "Tárgy",
+                value: object,
+                inline: true
+              },
+              {
+                name: "Mennyiség",
+                value: quantity,
+                inline: true
+              },
+              {
+                name: "Ár",
+                value: price,
+                inline: true
+              }
+            ],
+      
+            footer: {
+              text: `Feladó: ${interaction.user.username}`
+            },
+      
+            timestamp: new Date()
+          }
+        ]
       });
     }
     
@@ -259,38 +303,38 @@ client.on(Events.InteractionCreate, async interaction => {
     });
 
     await interaction.channel.send({
-  content: `<@$1487117451018764361>`, // 👈 TAG USER
-  embeds: [
-    {
-      title: `📦 TÁROLÓ • ${type.toUpperCase()}`, // 👈 BIG TITLE
-      color: type === "Berakás" ? 0x00ff00 : 0xff0000, // green/red
-
-      fields: [
+      content: `<@$1487117451018764361>`, // 👈 TAG USER
+      embeds: [
         {
-          name: "👤 Név",
-          value: data.name,
-          inline: true
-        },
-        {
-          name: "📦 Tárgy",
-          value: data.object,
-          inline: true
-        },
-        {
-          name: "🔢 Mennyiség",
-          value: data.quantity,
-          inline: true
+          title: `📦 TÁROLÓ • ${type.toUpperCase()}`, // 👈 BIG TITLE
+          color: type === "Berakás" ? 0x00ff00 : 0xff0000, // green/red
+    
+          fields: [
+            {
+              name: "Név",
+              value: data.name,
+              inline: true
+            },
+            {
+              name: "Tárgy",
+              value: data.object,
+              inline: true
+            },
+            {
+              name: "Mennyiség",
+              value: data.quantity,
+              inline: true
+            }
+          ],
+    
+          footer: {
+            text: `Felhasználó: ${interaction.user.username}`
+          },
+    
+          timestamp: new Date()
         }
-      ],
-
-      footer: {
-        text: `Felhasználó: ${interaction.user.username}`
-      },
-
-      timestamp: new Date()
-    }
-  ]
-});
+      ]
+  });
 
     delete client.tempContainer[interaction.user.id];
   }
