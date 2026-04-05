@@ -259,12 +259,38 @@ client.on(Events.InteractionCreate, async interaction => {
     });
 
     await interaction.channel.send({
-      content:
-        `📦 Tároló - ${type}\n` +
-        `Név: ${data.name}\n` +
-        `Tárgy: ${data.object}\n` +
-        `Mennyiség: ${data.quantity}`
-    });
+  content: `<@$1487117451018764361>`, // 👈 TAG USER
+  embeds: [
+    {
+      title: `📦 TÁROLÓ • ${type.toUpperCase()}`, // 👈 BIG TITLE
+      color: type === "Berakás" ? 0x00ff00 : 0xff0000, // green/red
+
+      fields: [
+        {
+          name: "👤 Név",
+          value: data.name,
+          inline: true
+        },
+        {
+          name: "📦 Tárgy",
+          value: data.object,
+          inline: true
+        },
+        {
+          name: "🔢 Mennyiség",
+          value: data.quantity,
+          inline: true
+        }
+      ],
+
+      footer: {
+        text: `Felhasználó: ${interaction.user.username}`
+      },
+
+      timestamp: new Date()
+    }
+  ]
+});
 
     delete client.tempContainer[interaction.user.id];
   }
