@@ -303,7 +303,7 @@ client.on(Events.InteractionCreate, async interaction => {
     });
 
     await interaction.channel.send({
-      content: `<@$1487117451018764361>`, // 👈 TAG USER
+      content: `<@&1487117451018764361>`, // 👈 TAG USER
       embeds: [
         {
           title: `📦 TÁROLÓ • ${type.toUpperCase()}`, // 👈 BIG TITLE
